@@ -63,3 +63,39 @@ Do one of:
 
 ## Conclusion
 In conclusion, this POC demonstrates the simplicity and effectiveness of using Argo CD for Kubernetes deployments. By embracing GitOps principles, we achieve automation, synchronization, and rollback capabilities, enhancing the reliability and consistency of our deployment processes.
+
+## Fix redirection issues!
+To fix redirection issues We need to disable internal TLS in the ArgoCD server and , we need to modify the command line arguments passed to the argocd-server container in the deployment,  the argument --insecure needs to be added to the command line arguments. 
+
+ 	kubectl -n argocd edit deployment.apps argocd-server
+
+	- Verify that the ARGOCD_SERVER_INSECURE environment variable is correctly set to true. In your deployment YAML, you have:
+	
+	```yaml
+	- name: ARGOCD_SERVER_INSECURE
+	  valueFrom:
+	    configMapKeyRef:
+	      key: server.insecure
+	      name: argocd-cmd-params-cm
+	      optional: true
+        ```  
+
+Modify the args field to include --insecure in the command line arguments:
+
+```yaml
+          - /usr/local/bin/argocd-server
+	  - --insecure  # Add this line
+``` 
+	
+
+Log in to the ArgoCD web interface https://argocd.acp.cloud.atos.net/ by using the default username admin and the password, collected by the following command.
+```bash
+	kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}"|base64 -d
+``` 
+
+```bash
+	$base64Password = kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}"
+	[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($base64Password))
+```
+
+
