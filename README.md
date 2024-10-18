@@ -84,11 +84,11 @@ Verify that the ARGOCD_SERVER_INSECURE environment variable is correctly set to 
 
 ```yaml
 - name: ARGOCD_SERVER_INSECURE
-	valueFrom:
-	configMapKeyRef:
-	    key: server.insecure
-	    name: argocd-cmd-params-cm
-	    optional: true
+   valueFrom:
+    configMapKeyRef:
+     key: server.insecure
+     name: argocd-cmd-params-cm
+     optional: true
 ```  
 
 Modify the args field to include --insecure in the command line arguments:
